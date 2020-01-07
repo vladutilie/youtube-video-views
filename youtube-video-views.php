@@ -10,29 +10,14 @@ class YT_Video_Views {
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
 		add_action( 'ytvv_sync', array( $this, 'sync' ) );
-		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
 		add_shortcode( 'yt_views', array( $this, 'get_views' ) );
-	}
-
-	public function add_cron_interval( $schedules ) {
-		$schedules['ten_seconds'] = array(
-			'interval' => 20,
-			'display'  => esc_html__( 'Every 5 seconds' ),
-		);
-		return $schedules;
-	}
-
-	public function schd() {
-		if ( ! wp_next_scheduled( 'ytvv_sync' ) ) {
-			wp_schedule_event( time(), 'ten_seconds', 'ytvv_sync' );
-		}
 	}
 
 	public function activate() {
 		$this->sync();
 		add_option( 'ytvv_option', 0, '', false );
 		if ( ! wp_next_scheduled( 'ytvv_sync' ) ) {
-			wp_schedule_event( time(), 'ten_seconds', 'ytvv_sync' );
+			wp_schedule_event( time(), 'twicedaily', 'ytvv_sync' );
 		}
 	}
 
@@ -44,36 +29,31 @@ class YT_Video_Views {
 	}
 
 	public function sync() {
-		/*
-		curl \
-		'https://www.googleapis.com/youtube/v3/videos?part=statistics&id=GyIrq4jJ-Ak%2CepCPaHwhW5g%2C8yA4Q_MPbZ8%2C9u0-ZoSUyKY%2C5MbSwpcPMuQ&key=[YOUR_API_KEY]' \
-		--header 'Authorization: Bearer [YOUR_ACCESS_TOKEN]' \
-		--header 'Accept: application/json' \
-		--compressed
-		*/
-		
 		$video_ids = 'GyIrq4jJ-Ak,epCPaHwhW5g,8yA4Q_MPbZ8,9u0-ZoSUyKY,5MbSwpcPMuQ';
 		$api_key   = 'AIzaSyCLoQpzA6SQ9gUcOda_UQoYM8c17f2glgo';
 
-		$url  = plugin_dir_url( __FILE__ ) . 'data.json'; // https://www.googleapis.com/youtube/v3/videos?part=statistics&id=' . $video_ids . '&key=' . $api_key
+		//$url  = plugin_dir_url( __FILE__ ) . 'data.json';
+		$url  = 'https://www.googleapis.com/youtube/v3/videos?part=statistics&id=' . urlencode( $video_ids ) . '&key=' . $api_key;
 		$args = array(
-			'sslverify' => false,
-			'timeout'   => 10,
+			'compress' => true,
+			'headers' => array(
+				'Accept' => 'application/json',
+			),
 		);
 
 		$request = wp_remote_get( $url, $args );
 		$data    = json_decode( $request['body'] );
 		$views   = 0;
 		foreach ( $data->items as $item ) {
-			$views += mt_rand(500, 2000); //absint( $item->statistics->viewCount );
+			$views += absint( $item->statistics->viewCount );
 		}
 		update_option( 'ytvv_option', $views, false );
 	}
 
 	public function get_views() {
 		$views = get_option( 'ytvv_option' );
-		return number_format( $views );
+		return $views;
 	}
 }
 
-$ytvv = new YT_Video_Views();
+new YT_Video_Views();
