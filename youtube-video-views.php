@@ -1,5 +1,16 @@
 <?php
-// Plugin name: YouTube Video Views
+/**
+ * Plugin Name: Youtube Vide Views
+ * Plugin URI:  N/A
+ * Description: Shows youtube videos views on your website using a shortcode.
+ * Version:     1.0.0
+ * Author:      Vlăduț Ilie
+ * Author URI:  https://vladilie.ro/
+ * License:     GPLv3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain: youtube-video-views
+ * Domain Path: /languages
+ */
 
 defined( 'ABSPATH' ) || exit;
 
@@ -32,7 +43,7 @@ class YT_Video_Views {
 		$video_ids = 'GyIrq4jJ-Ak,epCPaHwhW5g,8yA4Q_MPbZ8,9u0-ZoSUyKY,5MbSwpcPMuQ';
 		$api_key   = 'AIzaSyCLoQpzA6SQ9gUcOda_UQoYM8c17f2glgo';
 
-		//$url  = plugin_dir_url( __FILE__ ) . 'data.json';
+		// $url = plugin_dir_url( __FILE__ ) . 'data.json';
 		$url  = 'https://www.googleapis.com/youtube/v3/videos?part=statistics&id=' . urlencode( $video_ids ) . '&key=' . $api_key;
 		$args = array(
 			'compress' => true,
