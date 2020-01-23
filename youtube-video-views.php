@@ -72,7 +72,7 @@ class YT_Video_Views {
 
 	public function get_views() {
 		$views = get_option( 'ytvv_option' );
-		return $views;
+		return number_format( $views );
 	}
 }
 
