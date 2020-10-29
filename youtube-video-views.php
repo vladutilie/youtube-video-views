@@ -5,7 +5,7 @@ use YTVV\Includes\Main;
 /**
  * Plugin Name: YouTube Video Views
  * Plugin URI:  N/A
- * Description: Shows YouTube video views on your website using a shortcode.
+ * Description: Shows YouTube video views on your website using [ytvv] shortcode.
  * Version:     1.0.0
  * Author:      Vlăduț Ilie
  * Author URI:  https://vladilie.ro/
