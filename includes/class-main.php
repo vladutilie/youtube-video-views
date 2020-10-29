@@ -1,13 +1,42 @@
 <?php
+/**
+ * YouTube Video Views main class.
+ *
+ * @class YTVV
+ * @package YTVV\Includes
+ */
 
 namespace YTVV\Includes;
 
+/**
+ * Class Main
+ *
+ * @since 1.0.0
+ * @package YTVV\Includes
+ */
 class Main {
 
+	/**
+	 * The loader that add actions and filters.
+	 *
+	 * @since 1.0.0
+	 * @var object
+	 */
 	protected $loader;
 
+	/**
+	 * The version of the plugin.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
 	const VERSION = '1.0.0';
 
+	/**
+	 * Main constructor.
+	 *
+	 * @since 1.0.0
+	 */
 	public function __construct() {
 		$this->load_dependencies();
 		$this->define_hooks();
@@ -57,6 +86,20 @@ class Main {
 		load_plugin_textdomain( 'youtube-video-views', false, dirname( plugin_basename( __FILE__ ) ) . '/../languages/' );
 	}
 
+	/**
+	 * Activation hook. Adds options and initializes the plugin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @see add_option
+	 * @link https://developer.wordpress.org/reference/functions/add_option/
+	 *
+	 * @see wp_next_scheduled
+	 * @link https://developer.wordpress.org/reference/functions/wp_next_scheduled/
+	 *
+	 * @see wp_schedule_event
+	 * @link https://developer.wordpress.org/reference/functions/wp_schedule_event/
+	 */
 	public function activate() {
 		$this->sync();
 		add_option( 'ytvv_option', 0, '', false );
@@ -65,6 +108,23 @@ class Main {
 		}
 	}
 
+	/**
+	 * Deactivation hook. Removes the options of the plugin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @see delete_option
+	 * @link https://developer.wordpress.org/reference/functions/delete_option/
+	 *
+	 * @see wp_next_scheduled
+	 * @link https://developer.wordpress.org/reference/functions/wp_next_scheduled/
+	 *
+	 * @see wp_unschedule_event
+	 * @link https://developer.wordpress.org/reference/functions/wp_unschedule_event/
+	 *
+	 * @see wp_clear_scheduled_hook
+	 * @link https://developer.wordpress.org/reference/functions/wp_clear_scheduled_hook/
+	 */
 	public function deactivate() {
 		delete_option( 'ytvv_option' );
 		$timestamp = wp_next_scheduled( 'ytvv_sync' );
@@ -72,6 +132,20 @@ class Main {
 		wp_clear_scheduled_hook( 'ytvv_sync' );
 	}
 
+	/**
+	 * Get views from videos and processes them.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @see wp_remote_get
+	 * @link https://developer.wordpress.org/reference/functions/wp_remote_get/
+	 *
+	 * @see absint
+	 * @link https://developer.wordpress.org/reference/functions/absint/
+	 *
+	 * @see update_option
+	 * @link https://developer.wordpress.org/reference/functions/update_option/
+	 */
 	public function sync() {
 		$video_ids = array(
 			'epCPaHwhW5g', // Împotriva fabricii de doctorate | Emilia Șercan
@@ -103,6 +177,16 @@ class Main {
 		update_option( 'ytvv_option', $views, false );
 	}
 
+	/**
+	 * Shortcode callback. Gets the views from database.
+	 *
+	 * @return string
+	 *
+	 * @since 1.0.0
+	 *
+	 * @see get_option
+	 * @link https://developer.wordpress.org/reference/functions/get_option/
+	 */
 	public function get_views() {
 		$views = get_option( 'ytvv_option' );
 
