@@ -41,13 +41,13 @@ class YT_Video_Views {
 
 	public function sync() {
 		$video_ids = array(
-			'epCPaHwhW5g', // Împotriva fabricii de doctorate | Emilia Șercan.
-			'GyIrq4jJ-Ak', // Copiii dispăruți și lumea pe care nu o vedem | Camelia Cavadia.
-			'8yA4Q_MPbZ8', // A educa înseamnă a călăuzi | Carmen Ion.
-			'5MbSwpcPMuQ', // No one will ask you about Harry Potter | Elizabeth Sagan.
-			'9u0-ZoSUyKY', // Îndrăznește să mănânci cum îți place | Mihaela Bilic.
-			'zmxiGreSRCM', // Performance | Patricia Labou.
-			'zi8OtaiEA5Q', // Always | Adela Mureșan.
+			'epCPaHwhW5g', // Împotriva fabricii de doctorate | Emilia Șercan
+			'GyIrq4jJ-Ak', // Copiii dispăruți și lumea pe care nu o vedem | Camelia Cavadia
+			'8yA4Q_MPbZ8', // A educa înseamnă a călăuzi | Carmen Ion
+			'5MbSwpcPMuQ', // No one will ask you about Harry Potter | Elizabeth Sagan
+			'9u0-ZoSUyKY', // Îndrăznește să mănânci cum îți place | Mihaela Bilic
+			'zmxiGreSRCM', // Performance | Patricia Labou
+			'zi8OtaiEA5Q', // Always | Adela Mureșan
 		);
 		$videos    = implode( ',', $video_ids );
 		$api_key   = 'AIzaSyCLoQpzA6SQ9gUcOda_UQoYM8c17f2glgo';
@@ -63,7 +63,7 @@ class YT_Video_Views {
 
 		$request = wp_remote_get( $url, $args );
 		$data    = json_decode( $request['body'] );
-		$views   = 0;
+		$views   = 33100 + 4800; // De la aftermovie (Highlights) și de la clipul cu Vlad Voiculescu
 		foreach ( $data->items as $item ) {
 			$views += absint( $item->statistics->viewCount );
 		}
