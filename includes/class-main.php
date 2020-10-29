@@ -33,6 +33,18 @@ class Main {
 	const VERSION = '1.0.0';
 
 	/**
+	 * Configuration data.
+	 *
+	 * @since 1.0.0
+	 * @var array
+	 */
+	const CONFIG = [
+		'cron_event'  => 'ytvv_sync',
+		'shortcode'   => 'ytvv',
+		'option_name' => 'youtube_video_views',
+	];
+
+	/**
 	 * Main constructor.
 	 *
 	 * @since 1.0.0
@@ -66,9 +78,9 @@ class Main {
 	private function define_hooks() {
 		$this->loader = new Loader();
 		$this->loader->add_action( 'plugins_loaded', $this, 'load_textdomain' );
-		$this->loader->add_action( 'ytvv_sync', $this, 'sync' );
+		$this->loader->add_action( self::CONFIG['cron_event'], $this, 'sync' );
 
-		add_shortcode( 'yt_views', [ $this, 'get_views' ] );
+		add_shortcode( self::CONFIG['shortcode'], [ $this, 'get_views' ] );
 	}
 
 	/**
@@ -102,9 +114,9 @@ class Main {
 	 */
 	public function activate() {
 		$this->sync();
-		add_option( 'ytvv_option', 0, '', false );
-		if ( ! wp_next_scheduled( 'ytvv_sync' ) ) {
-			wp_schedule_event( time(), 'twicedaily', 'ytvv_sync' );
+		add_option( self::CONFIG['option_name'], 0, '', false );
+		if ( ! wp_next_scheduled( self::CONFIG['cron_event'] ) ) {
+			wp_schedule_event( time(), 'twicedaily', self::CONFIG['cron_event'] );
 		}
 	}
 
@@ -126,10 +138,10 @@ class Main {
 	 * @link https://developer.wordpress.org/reference/functions/wp_clear_scheduled_hook/
 	 */
 	public function deactivate() {
-		delete_option( 'ytvv_option' );
-		$timestamp = wp_next_scheduled( 'ytvv_sync' );
-		wp_unschedule_event( $timestamp, 'ytvv_sync' );
-		wp_clear_scheduled_hook( 'ytvv_sync' );
+		delete_option( self::CONFIG['option_name'] );
+		$timestamp = wp_next_scheduled( self::CONFIG['cron_event'] );
+		wp_unschedule_event( $timestamp, self::CONFIG['cron_event'] );
+		wp_clear_scheduled_hook( self::CONFIG['cron_event'] );
 	}
 
 	/**
@@ -174,7 +186,7 @@ class Main {
 		foreach ( $data->items as $item ) {
 			$views += absint( $item->statistics->viewCount );
 		}
-		update_option( 'ytvv_option', $views, false );
+		update_option( self::CONFIG['option_name'], $views, false );
 	}
 
 	/**
@@ -188,7 +200,7 @@ class Main {
 	 * @link https://developer.wordpress.org/reference/functions/get_option/
 	 */
 	public function get_views() {
-		$views = get_option( 'ytvv_option' );
+		$views = get_option( self::CONFIG['option_name'] );
 
 		return number_format( $views );
 	}
