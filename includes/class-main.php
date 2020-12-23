@@ -159,7 +159,7 @@ class Main {
 	 * @link https://developer.wordpress.org/reference/functions/update_option/
 	 */
 	public function sync() {
-		$video_ids = array(
+		$video_ids = [
 			'epCPaHwhW5g', // Împotriva fabricii de doctorate | Emilia Șercan
 			'GyIrq4jJ-Ak', // Copiii dispăruți și lumea pe care nu o vedem | Camelia Cavadia
 			'8yA4Q_MPbZ8', // A educa înseamnă a călăuzi | Carmen Ion
@@ -167,18 +167,18 @@ class Main {
 			'9u0-ZoSUyKY', // Îndrăznește să mănânci cum îți place | Mihaela Bilic
 			'zmxiGreSRCM', // Performance | Patricia Labou
 			'zi8OtaiEA5Q', // Always | Adela Mureșan
-		);
+		];
 		$videos    = implode( ',', $video_ids );
 		$api_key   = 'AIzaSyCLoQpzA6SQ9gUcOda_UQoYM8c17f2glgo';
 
 		// $url = plugin_dir_url( __FILE__ ) . 'data.json';
 		$url  = 'https://www.googleapis.com/youtube/v3/videos?part=statistics&id=' . urlencode( $videos ) . '&key=' . $api_key;
-		$args = array(
+		$args = [
 			'compress' => true,
-			'headers'  => array(
+			'headers'  => [
 				'Accept' => 'application/json',
-			),
-		);
+			],
+		];
 
 		$request = wp_remote_get( $url, $args );
 		$data    = json_decode( $request['body'] );
