@@ -1,14 +1,14 @@
 name: CI
 
-on: [push]
+on: [ push ]
 
 jobs:
   run:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-latest]
-        php-versions: ['7.2', '7.3', '7.4']
+        operating-system: [ ubuntu-latest ]
+        php-versions: [ '7.3', '7.4' ]
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
@@ -18,19 +18,31 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extension-csv: mbstring, intl #optional, setup extensions
-          ini-values-csv: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
+          extensions: mbstring, intl #optional, setup extensions
+          ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
           coverage: xdebug #optional, setup coverage driver
-          pecl: false #optional, setup PECL
 
       - name: Check PHP Version
         run: php -v
+
+      - name: Installing MySQL
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3306 # Optional, default value is 3306. The port of host
+          container port: 3306 # Optional, default value is 3306. The port of container
+          character set server: 'utf8mb4' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          collation server: 'utf8mb4_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+          mysql database: 'wordpress_test' # Optional, default value is "test". The specified database which will be create
+          mysql root password: 'root' # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: 'root' # Required if "mysql user" exists. The password for the "mysql user"
 
       - name: Composer install
         run: composer install --optimize-autoloader --prefer-dist
 
       - name: Install WP Tests
-        run: bash bin/install-wp-tests.sh wordpress_test root root localhost latest
+        run: bash bin/install-wp-tests.sh wordpress_test root root localhost latest true
 
       - name: phpunit tests
         run: ./vendor/bin/phpunit
