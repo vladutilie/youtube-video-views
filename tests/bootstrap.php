@@ -4,6 +4,7 @@
  *
  * @package Youtube_Video_Views
  */
+require_once(dirname(__DIR__) . '/vendor/autoload.php');
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
